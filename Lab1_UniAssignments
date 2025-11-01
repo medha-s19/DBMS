@@ -1,0 +1,62 @@
+create database UniAssignments;
+use UniAssignments;
+create table departments (
+  dept_id int primary key,
+  dept_name varchar(100) not null
+);
+
+create table professors (
+  professor_id int primary key,
+  professor_name varchar(100) not null,
+  dept_id int,
+  salary int,
+  foreign key (dept_id) references departments(dept_id)
+);
+
+create table courses (
+  course_id int primary key,
+  course_name varchar(100) not null,
+  dept_id int,
+  credits int,
+  foreign key (dept_id) references departments(dept_id)
+);
+
+create table students (
+  student_id int primary key,
+  student_name varchar(100) not null,
+  age int,
+  dept_id int,
+  foreign key (dept_id) references departments(dept_id)
+);
+
+create table enrollments (
+  enrollment_id int primary key,
+  student_id int,
+  course_id int,
+  enrollment_date date,
+  foreign key (student_id) references students(student_id),
+  foreign key (course_id) references courses(course_id)
+);
+
+insert into departments values (1, 'computer science');
+insert into departments values (2, 'mathematics');
+
+insert into professors values (101, 'dr. smith', 1, 80000);
+insert into professors values (102, 'dr. lee', 2, 75000);
+
+insert into courses values (201, 'database systems', 1, 4);
+insert into courses values (202, 'linear algebra', 2, 3);
+
+insert into students values (301, 'alice', 20, 1);
+insert into students values (302, 'bob', 21, 2);
+insert into enrollments values (401, 301, 201, '2025-08-18');
+insert into enrollments values (402, 302, 202, '2025-08-18');
+
+alter table students add column phone_number varchar(15);
+alter table courses modify column course_name varchar(150);
+alter table professors drop column salary;
+select * from departments;
+select * from professors;
+select * from courses;
+select * from students;
+select * from enrollments;

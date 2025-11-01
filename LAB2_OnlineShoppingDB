@@ -1,0 +1,100 @@
+create database OnlineShoppingDB;
+use OnlineShoppingDB;
+
+create table customers (
+  customer_id int primary key,
+  customer_name varchar(100),
+  email varchar(100),
+  phone varchar(15)
+);
+
+create table products (
+  product_id int primary key,
+  product_name varchar(100),
+  category varchar(50),
+  price decimal(10,2),
+  stock_quantity int
+);
+
+create table stores (
+  store_id int primary key,
+  store_name varchar(100),
+  location varchar(100)
+);
+
+create table orders (
+  order_id int primary key,
+  customer_id int,
+  store_id int,
+  order_date date,
+  foreign key (customer_id) references customers(customer_id),
+  foreign key (store_id) references stores(store_id)
+);
+
+create table order_details (
+  order_detail_id int primary key,
+  order_id int,
+  product_id int,
+  quantity int,
+  foreign key (order_id) references orders(order_id),
+  foreign key (product_id) references products(product_id)
+);
+
+create table payments (
+  payment_id int primary key,
+  order_id int,
+  payment_date date,
+  amount decimal(10,2),
+  payment_method varchar(50),
+  foreign key (order_id) references orders(order_id)
+);
+
+insert into customers values (1, 'alice', 'alice@example.com', '1234567890');
+insert into customers values (2, 'bob', 'bob@example.com', '2345678901');
+insert into customers values (3, 'carol', 'carol@example.com', '3456789012');
+insert into customers values (4, 'dave', 'dave@example.com', '4567890123');
+insert into customers values (5, 'eve', 'eve@example.com', '5678901234');
+
+insert into products values (101, 'office chair', 'furniture', 150.00, 20);
+insert into products values (102, 'table lamp', 'furniture', 40.00, 50);
+insert into products values (103, 'headphones', 'electronics', 80.00, 30);
+insert into products values (104, 'usb cable', 'electronics', 10.00, 100);
+insert into products values (105, 'coffee mug', 'kitchen', 12.00, 40);
+
+insert into stores values (201, 'downtown store', 'New York');
+insert into stores values (202, 'uptown store', 'New York');
+insert into stores values (203, 'suburb store', 'Los Angeles');
+insert into stores values (204, 'mall store', 'Chicago');
+insert into stores values (205, 'airport store', 'San Francisco');
+
+insert into orders values (301, 1, 201, '2025-08-18');
+insert into orders values (302, 2, 202, '2025-08-17');
+insert into orders values (303, 3, 203, '2025-08-16');
+insert into orders values (304, 4, 204, '2025-08-18');
+insert into orders values (305, 5, 205, '2025-08-15');
+
+insert into order_details values (401, 301, 101, 2);
+insert into order_details values (402, 302, 103, 1);
+insert into order_details values (403, 303, 105, 4);
+insert into order_details values (404, 304, 102, 3);
+insert into order_details values (405, 305, 104, 5);
+
+insert into payments values (501, 301, '2025-08-18', 300.00, 'credit card');
+insert into payments values (502, 302, '2025-08-17', 80.00, 'paypal');
+insert into payments values (503, 303, '2025-08-16', 48.00, 'debit card');
+insert into payments values (504, 304, '2025-08-18', 120.00, 'credit card');
+insert into payments values (505, 305, '2025-08-15', 50.00, 'cash');
+update products
+set stock_quantity = stock_quantity - 2
+where product_id = 101;
+
+update products
+set price = price * 1.10
+where category = 'furniture';
+
+select * from customers;
+select * from products;
+select * from stores;
+select * from orders;
+select * from order_details;
+select * from payments;

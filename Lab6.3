@@ -1,0 +1,211 @@
+-- ======================================================================
+-- Lab Experiment – GROUP BY, HAVING, ORDER BY and INDEXING
+-- ======================================================================
+
+-- Objective:
+-- 1. To understand and apply the SQL GROUP BY clause to group rows based on column values and perform aggregate operations.
+-- 2. To explore the HAVING clause for filtering grouped data post aggregation.
+-- 3. To use the ORDER BY clause to sort query results in ascending or descending order.
+-- 4. To implement Indexing in SQL for improving query performance.
+
+-- ======================================================================
+-- Step 1: Create Database
+DROP DATABASE IF EXISTS HospitalDB;
+CREATE DATABASE HospitalDB;
+USE HospitalDB;
+
+-- ======================================================================
+-- Step 2: Create Tables
+-- Create the relational schema for Patients and Visits.
+
+CREATE TABLE Patients (
+    patient_id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_name VARCHAR(50),
+    age INT,
+    gender VARCHAR(10)
+);
+
+CREATE TABLE Visits (
+    visit_id INT PRIMARY KEY AUTO_INCREMENT,
+    patient_id INT,
+    visit_date DATE,
+    doctor_id INT,
+    diagnosis VARCHAR(100),
+    treatment_cost DECIMAL(10,2),
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id)
+);
+
+-- OUTPUT:
+-- (After creating tables, run DESC Patients; and DESC Visits; to verify structure.)
+-- WRITE YOUR OUTPUT BELOW
+DESC Patients;
+DESC Visits;
+
+-- # Field, Type, Null, Key, Default, Extra
+-- patient_id, int, NO, PRI, , auto_increment
+-- patient_name, varchar(50), YES, , , 
+-- age, int, YES, , , 
+-- gender, varchar(10), YES, , , 
+
+-- # Field, Type, Null, Key, Default, Extra
+-- visit_id, int, NO, PRI, , auto_increment
+-- patient_id, int, YES, MUL, , 
+-- visit_date, date, YES, , , 
+-- doctor_id, int, YES, , , 
+-- diagnosis, varchar(100), YES, , , 
+-- treatment_cost, decimal(10,2), YES, , , 
+
+
+
+
+-- ======================================================================
+-- Step 3: Insert Sample Data
+-- Insert sample records into both tables.
+-- Add at least 5 patients and 8–10 visit records with varying diagnoses and treatment costs.
+-- WRITE YOUR QUERIES BELOW
+INSERT INTO Patients (patient_name, age, gender) VALUES
+('Ravi Kumar', 32, 'Male'),
+('Anita Sharma', 45, 'Female'),
+('Suresh Das', 28, 'Male'),
+('Priya Nair', 35, 'Female'),
+('Rahul Mehta', 50, 'Male');
+
+INSERT INTO Visits (patient_id, visit_date, doctor_id, diagnosis, treatment_cost) VALUES
+(1, '2024-02-15', 101, 'Flu', 150.00),
+(1, '2024-03-01', 102, 'Headache', 120.00),
+(2, '2024-03-05', 101, 'Diabetes', 500.00),
+(3, '2024-03-10', 103, 'Allergy', 220.00),
+(4, '2024-03-15', 104, 'Flu', 180.00),
+(5, '2024-03-18', 105, 'Hypertension', 400.00),
+(2, '2024-03-20', 103, 'Hypertension', 450.00),
+(3, '2024-03-22', 104, 'Cold', 100.00),
+(4, '2024-03-25', 101, 'Flu', 250.00);
+
+
+
+-- OUTPUT:
+-- (Run SELECT * FROM Patients; and SELECT * FROM Visits; to verify inserted data.)
+-- WRITE YOUR OUTPUT BELOW
+ SELECT * FROM Patients; 
+ # patient_id, patient_name, age, gender
+-- 1, Ravi Kumar, 32, Male
+-- 2, Anita Sharma, 45, Female
+-- 3, Suresh Das, 28, Male
+-- 4, Priya Nair, 35, Female
+-- 5, Rahul Mehta, 50, Male
+
+
+ SELECT * FROM Visits;
+# visit_id, patient_id, visit_date, doctor_id, diagnosis, treatment_cost
+-- 1, 1, 2024-02-15, 101, Flu, 150.00
+-- 2, 1, 2024-03-01, 102, Headache, 120.00
+-- 3, 2, 2024-03-05, 101, Diabetes, 500.00
+-- 4, 3, 2024-03-10, 103, Allergy, 220.00
+-- 5, 4, 2024-03-15, 104, Flu, 180.00
+-- 6, 5, 2024-03-18, 105, Hypertension, 400.00
+-- 7, 2, 2024-03-20, 103, Hypertension, 450.00
+-- 8, 3, 2024-03-22, 104, Cold, 100.00
+-- 9, 4, 2024-03-25, 101, Flu, 250.00
+
+
+-- ======================================================================
+-- QUICK INTRODUCTION (for notes)
+-- GROUP BY: Groups rows sharing a value and performs aggregate functions like SUM(), COUNT(), AVG().
+-- HAVING: Filters grouped data after aggregation.
+-- ORDER BY: Sorts query results (ASC by default, DESC for descending order).
+-- INDEXING: Improves query performance by creating a quick lookup on key columns.
+
+-- ======================================================================
+-- STUDENT ACTIVITY TASKS
+-- ======================================================================
+
+-- Task 1: Grouping Data by Diagnosis
+-- Group the data based on diagnosis and calculate the average treatment cost for each diagnosis.
+-- WRITE YOUR QUERY BELOW
+SELECT 
+    diagnosis,
+    AVG(treatment_cost) AS avg_cost
+FROM Visits
+GROUP BY diagnosis;
+
+-- OUTPUT:
+-- WRITE YOUR OUTPUT BELOW
+# diagnosis, avg_cost
+-- Flu, 193.333333
+-- Headache, 120.000000
+-- Diabetes, 500.000000
+-- Allergy, 220.000000
+-- Hypertension, 425.000000
+-- Cold, 100.000000
+
+
+
+-- ======================================================================
+-- Task 2: Filtering with HAVING Clause
+-- Filter the grouped data to show only diagnoses where the average treatment cost is greater than 200.
+-- WRITE YOUR QUERY BELOW
+SELECT 
+    diagnosis,
+    AVG(treatment_cost) AS avg_cost
+FROM Visits
+GROUP BY diagnosis
+HAVING AVG(treatment_cost) > 200;
+
+-- OUTPUT:
+-- WRITE YOUR OUTPUT BELOW
+# diagnosis, avg_cost
+-- Diabetes, 500.000000
+-- Allergy, 220.000000
+-- Hypertension, 425.000000
+
+
+
+-- ======================================================================
+-- Task 3: Sorting the Results
+-- Sort the results from Task 1 in descending order of average treatment cost.
+-- WRITE YOUR QUERY BELOW
+SELECT 
+    diagnosis,
+    AVG(treatment_cost) AS avg_cost
+FROM Visits
+GROUP BY diagnosis
+ORDER BY avg_cost DESC;
+
+-- OUTPUT:
+-- WRITE YOUR OUTPUT BELOW
+
+# diagnosis, avg_cost
+-- Diabetes, 500.000000
+-- Hypertension, 425.000000
+-- Allergy, 220.000000
+-- Flu, 193.333333
+-- Headache, 120.000000
+-- Cold, 100.000000
+
+
+
+-- ======================================================================
+-- Task 4: Optimizing with Indexes
+-- Create an index on the patient_id column in the Visits table to improve performance.
+-- Then run a query that retrieves all visits for a particular patient.
+-- WRITE YOUR QUERIES BELOW
+CREATE INDEX idx_patient_id ON Visits(patient_id);
+SHOW INDEX FROM Visits;
+SELECT * FROM Visits WHERE patient_id = 2;
+
+-- OUTPUT:
+-- (Verify index creation using SHOW INDEX FROM Visits;)
+-- WRITE YOUR OUTPUT BELOW
+
+# Table, Non_unique, Key_name, Seq_in_index, Column_name, Collation, Cardinality, Sub_part, Packed, Null, Index_type, Comment, Index_comment, Visible, Expression
+-- visits, 0, PRIMARY, 1, visit_id, A, 9, , , , BTREE, , , YES, 
+-- visits, 1, idx_patient_id, 1, patient_id, A, 5, , , YES, BTREE, , , YES, 
+
+# visit_id, patient_id, visit_date, doctor_id, diagnosis, treatment_cost
+-- 3, 2, 2024-03-05, 101, Diabetes, 500.00
+-- 7, 2, 2024-03-20, 103, Hypertension, 450.00
+
+
+-- ======================================================================
+-- END OF EXPERIMENT
+-- ======================================================================

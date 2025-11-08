@@ -98,3 +98,4 @@ select * from stores;
 select * from orders;
 select * from order_details;
 select * from payments;
+DROP TABLE payments;
